@@ -1,0 +1,32 @@
+nohup: ignoring input
+Last process running now      20230327-055802
+Last process running now      20230327-065802
+Last process running now      20230327-075802
+Last process running now      20230327-085802
+Last process running now      20230327-095802
+Last process running now      20230327-105802
+Last process running now      20230327-115802
+Last process running now      20230327-125802
+Last process running now      20230327-135802
+Last process running now      20230327-145802
+Last process running now      20230327-155802
+Last process running now      20230327-165802
+Last process running now      20230327-175802
+Last process running now      20230327-185802
+Last process running now      20230327-195802
+Last process running now      20230327-205802
+Last process running now      20230327-215802
+Last process running now      20230327-225802
+Last process running now      20230327-235802
+Last process running now      20230328-005802
+Last process running now      20230328-015802
+Last process running now      20230328-025802
+Last process running now      20230328-035802
+Last process running now      20230328-045802
+Processed over last task
+mkdir: cannot create directory ‘../record/classification_TT_all_CCL_overlap’: File exists
+finish TT task upload
+now for tcga
+mkdir: cannot create directory ‘../record/classification_tcga_all_CCL_overlap’: File exists
+Processing next task: 10 all_CCL raw raw   20230328-055802
+Finish all !!!!

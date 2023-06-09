@@ -1,0 +1,4 @@
+nohup: ignoring input
+Process < 21, finished last task!
+mkdir: cannot create directory ‘../record/wanzheng_tcga_all_CCL_all’: File exists
+Processing next task: 9 all_CCL raw raw   20230418-093235
