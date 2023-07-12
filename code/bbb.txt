@@ -1,0 +1,135 @@
+nohup: ignoring input
+Processed over last task
+mkdir: cannot create directory ‘../record/classification_TT_all_CCL_overlap’: File exists
+finish TT task upload
+now for tcga
+Processing next task: 9 all_CCL raw raw   20230327-042452
+Last process running now      20230327-042655
+Last process running now      20230327-052655
+Last process running now      20230327-062655
+Last process running now      20230327-072655
+Last process running now      20230327-082655
+Last process running now      20230327-092655
+Last process running now      20230327-102655
+Last process running now      20230327-112655
+Last process running now      20230327-122655
+Processed over last task
+mkdir: cannot create directory ‘../record/classification_TT_all_CCL_overlap’: File exists
+finish TT task upload
+now for tcga
+mkdir: cannot create directory ‘../record/classification_tcga_all_CCL_overlap’: File exists
+Processing next task: 8 all_CCL raw raw   20230327-132655
+Last process running now      20230327-132858
+Last process running now      20230327-142858
+Last process running now      20230327-152858
+Last process running now      20230327-162858
+Last process running now      20230327-172858
+Last process running now      20230327-182858
+Last process running now      20230327-192858
+Last process running now      20230327-202858
+Last process running now      20230327-212858
+Last process running now      20230327-222858
+Last process running now      20230327-232858
+Last process running now      20230328-002858
+Last process running now      20230328-012858
+Last process running now      20230328-022858
+Last process running now      20230328-032858
+Last process running now      20230328-042858
+Last process running now      20230328-052858
+Last process running now      20230328-062858
+Last process running now      20230328-072858
+Last process running now      20230328-082858
+Last process running now      20230328-092858
+Last process running now      20230328-102858
+Last process running now      20230328-112858
+Last process running now      20230328-122858
+Last process running now      20230328-132858
+Last process running now      20230328-142858
+Last process running now      20230328-152858
+Last process running now      20230328-162858
+Last process running now      20230328-172858
+Last process running now      20230328-182858
+Last process running now      20230328-192858
+Last process running now      20230328-202858
+Last process running now      20230328-212858
+Last process running now      20230328-222858
+Last process running now      20230328-232858
+Last process running now      20230329-002858
+Last process running now      20230329-012858
+Processed over last task
+mkdir: cannot create directory ‘../record/classification_TT_all_CCL_overlap’: File exists
+finish TT task upload
+now for tcga
+mkdir: cannot create directory ‘../record/classification_tcga_all_CCL_overlap’: File exists
+Processing next task: 7 all_CCL raw raw   20230329-022859
+Last process running now      20230329-023101
+Last process running now      20230329-033101
+Last process running now      20230329-043101
+Last process running now      20230329-053101
+Last process running now      20230329-063101
+Last process running now      20230329-073101
+Last process running now      20230329-083101
+Last process running now      20230329-093101
+Last process running now      20230329-103101
+Processed over last task
+mkdir: cannot create directory ‘../record/classification_TT_all_CCL_overlap’: File exists
+finish TT task upload
+now for tcga
+mkdir: cannot create directory ‘../record/classification_tcga_all_CCL_overlap’: File exists
+Processing next task: 6 all_CCL raw raw   20230329-113102
+Last process running now      20230329-113304
+Last process running now      20230329-123304
+Last process running now      20230329-133305
+Last process running now      20230329-143305
+Last process running now      20230329-153305
+Last process running now      20230329-163305
+Last process running now      20230329-173305
+Last process running now      20230329-183305
+Processed over last task
+mkdir: cannot create directory ‘../record/classification_TT_all_CCL_overlap’: File exists
+finish TT task upload
+now for tcga
+mkdir: cannot create directory ‘../record/classification_tcga_all_CCL_overlap’: File exists
+Processing next task: 5 all_CCL raw raw   20230329-193305
+Last process running now      20230329-193508
+Last process running now      20230329-203508
+Last process running now      20230329-213508
+Processed over last task
+mkdir: cannot create directory ‘../record/classification_TT_all_CCL_overlap’: File exists
+finish TT task upload
+now for tcga
+mkdir: cannot create directory ‘../record/classification_tcga_all_CCL_overlap’: File exists
+Processing next task: 4 all_CCL raw raw   20230329-223508
+Last process running now      20230329-223710
+Last process running now      20230329-233710
+Last process running now      20230330-003710
+Last process running now      20230330-013710
+Last process running now      20230330-023710
+Processed over last task
+mkdir: cannot create directory ‘../record/classification_TT_all_CCL_overlap’: File exists
+finish TT task upload
+now for tcga
+mkdir: cannot create directory ‘../record/classification_tcga_all_CCL_overlap’: File exists
+Processing next task: 3 all_CCL raw raw   20230330-033710
+Last process running now      20230330-033913
+Last process running now      20230330-043913
+Last process running now      20230330-053913
+Last process running now      20230330-063913
+Last process running now      20230330-073913
+Processed over last task
+mkdir: cannot create directory ‘../record/classification_TT_all_CCL_overlap’: File exists
+finish TT task upload
+now for tcga
+mkdir: cannot create directory ‘../record/classification_tcga_all_CCL_overlap’: File exists
+Processing next task: 2 all_CCL raw raw   20230330-083913
+Last process running now      20230330-084116
+Last process running now      20230330-094116
+Last process running now      20230330-104116
+Processed over last task
+mkdir: cannot create directory ‘../record/classification_TT_all_CCL_overlap’: File exists
+finish TT task upload
+now for tcga
+mkdir: cannot create directory ‘../record/classification_tcga_all_CCL_overlap’: File exists
+Processing next task: 1 all_CCL raw raw   20230330-114116
+run_pretrain.sh: line 142: e: command not found
+Finish all !!!!
