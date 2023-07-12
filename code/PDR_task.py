@@ -1,6 +1,3 @@
-# 这个理论上也是兼容上一版的，可以直接舍弃上一版，但调试时候先保留上一版
-# 用于tcga_pretrain的模型预测各个癌种的pdr_score
-# 基本逻辑是：先用run_pretrain_all训出一组模型存在BRCA，而后外部指定癌种序号，每次调用这个模型去生成即可
 import pandas as pd
 import torch
 import json
@@ -8,63 +5,30 @@ import os
 import argparse
 import random
 import pickle
-from collections import defaultdict
 import itertools
 import numpy as np
-# https://www.nature.com/articles/s42256-022-00541-0#Abs1
 import data
 import data_config
+import fine_tuning
 
-import train_coral
+# add model_train path
+import sys
+sys.path.append('../model_train')
+
 import train_ae
-import train_dae
-import train_vae
 import train_ae_mmd
 import train_ae_adv 
 
+import train_dsn 
 import train_dsn_mmd
 import train_dsn_adv
-import train_dsn_adnn 
 
-import train_dsrn 
 import train_dsrn_mmd 
 import train_dsrn_adv
-import train_dsrn_adnn
 
 
-import fine_tuning1
-import ml_baseline
 from copy import deepcopy
-
-
-def generate_encoded_features(encoder, dataloader, normalize_flag=False):
-    """
-
-    :param normalize_flag:
-    :param encoder:
-    :param dataloader:
-    :return:
-    """
-    encoder.eval()
-    raw_feature_tensor = dataloader.dataset.tensors[0].cpu()
-    label_tensor = dataloader.dataset.tensors[1].cpu()
-
-    encoded_feature_tensor = encoder.cpu()(raw_feature_tensor)
-    if normalize_flag:
-        encoded_feature_tensor = torch.nn.functional.normalize(encoded_feature_tensor, p=2, dim=1)
-    return encoded_feature_tensor, label_tensor
-
-
-def load_pickle(pickle_file):
-    data = []
-    with open(pickle_file, 'rb') as f:
-        try:
-            while True:
-                data.append(pickle.load(f))
-        except EOFError:
-            pass
-
-    return data
+from collections import defaultdict
 
 
 def wrap_training_params(training_params, type='unlabeled'):
@@ -73,37 +37,31 @@ def wrap_training_params(training_params, type='unlabeled'):
 
     return aux_dict
 
-
 def safe_make_dir(new_folder_name):
     if not os.path.exists(new_folder_name):
         os.makedirs(new_folder_name)
     else:
         print(new_folder_name, 'exists!')
 
-
 def dict_to_str(d):
     return "_".join(["_".join([k, str(v)]) for k, v in d.items()])
+
 
 
 def main(args, update_params_dict):
     if args.method == 'ae':
         train_fn = train_ae.train_ae
-    elif args.method == 'dae':
-        train_fn = train_dae.train_dae
-    elif args.method == 'vae':
-        train_fn = train_vae.train_vae
-
     elif args.method == 'ae_mmd':
         train_fn = train_ae_mmd.train_ae_mmd
     elif args.method == 'ae_adv':
         train_fn = train_ae_adv.train_ae_adv
     
+    elif args.method == 'dsn':
+        train_fn = train_dsn.train_dsn
     elif args.method == 'dsn_mmd':
         train_fn = train_dsn_mmd.train_dsn_mmd
     elif args.method == 'dsn_adv':
         train_fn = train_dsn_adv.train_dsn_adv
-    elif args.method == 'dsn_adnn':
-        train_fn = train_dsn_adnn.train_dsn_adnn
 
     elif args.method == 'dsrn':
         train_fn = train_dsrn.train_dsrn
@@ -111,18 +69,13 @@ def main(args, update_params_dict):
         train_fn = train_dsrn_mmd.train_dsrn_mmd
     elif args.method == 'dsrn_adv':
         train_fn = train_dsrn_adv.train_dsrn_adv
-    elif args.method == 'dsrn_adnn':
-        train_fn = train_dsrn_adnn.train_dsrn_adnn
     
     else:
         raise NotImplementedError("Not true method supplied!")
     
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-    # pretrain_dataset_file = os.path.join(data_config.every_tumor_type_folder,args.select_gene_method,f"{args.pretrain_dataset}_uq1000_feature.csv")
-    # gex_features_df = pd.read_csv(pretrain_dataset_file, index_col=0)
 
-    
     with open(os.path.join('model_save/train_params.json'), 'r') as f:
         training_params = json.load(f)
 
@@ -134,15 +87,13 @@ def main(args, update_params_dict):
                               CCL_tumor_type,args.CCL_construction,
                               tumor_type,
                               args.CCL_dataset,args.select_drug_method)
-    if args.use_tcga_pretrain_model:  #重新确定存的地址：通过改source_dir而改动method_save_folder
+    if args.use_tcga_pretrain_model:  
         source_dir = os.path.join("tcga",args.tcga_construction,
                               args.select_gene_method,
                               CCL_tumor_type,args.CCL_construction,
                               tumor_type,
                               args.CCL_dataset,args.select_drug_method)
-    #  pretrain数据，pretrain数据基因挑选方法，zero-shot什么癌种，用的什么CDR数据（GDSC？），怎么挑选Drug数据
 
-    #后面就存在results中指定的文件夹内了
     if not args.norm_flag:
         method_save_folder = os.path.join('../results',args.store_dir, args.method,source_dir)
     else:
@@ -152,7 +103,7 @@ def main(args, update_params_dict):
         {
             'device': device,
             'input_dim': gex_features_df.shape[-1],
-            'model_save_folder': os.path.join(method_save_folder, param_str), #,  一个模型就存一个unlabel model
+            'model_save_folder': os.path.join(method_save_folder, param_str), 
             'es_flag': False,
             'retrain_flag': args.retrain_flag,
             'norm_flag': args.norm_flag
@@ -244,47 +195,34 @@ def main(args, update_params_dict):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser('DSRN_ADV training and evaluation')
-    parser.add_argument('--pretrain_num',default = 2,type=int)
+    parser = argparse.ArgumentParser('PDR task')
+    parser.add_argument('--params_num',default = None,type=int)
+    parser.add_argument('--pretrain_num',default = None,type=int)
     parser.add_argument('--zero_shot_num',default = None,type=int)
-    parser.add_argument('--method_num',default = 10,type=int)
-    parser.add_argument('--use_tcga_pretrain_model',default = False,type=bool)
+    parser.add_argument('--method_num',default = None,type=int)
     
-    parser.add_argument('--method', dest='method', nargs='?', default='dsrn_adv',
-                        choices=['ae','dae','vae','ae_mmd','ae_adv', #ae_mmd:3
-                       'dsn_mmd','dsn_adv','dsn_adnn',
-                       'dsrn','dsrn_mmd','dsrn_adv','dsrn_adnn'])
+    parser.add_argument('--method', dest='method', nargs='?', default='dsn_adv',
+                        choices=['ae','ae_mmd','ae_adv',
+                                'dsn','dsn_mmd','dsn_adv',
+                                'dsrn_mmd','dsrn_adv'])
     parser.add_argument('--metric', dest='metric', nargs='?', default='auroc', choices=['auroc', 'auprc'])
 
     parser.add_argument('--measurement', dest='measurement', nargs='?', default='AUC', choices=['AUC', 'LN_IC50'])
-    parser.add_argument('--a_thres', dest='a_thres', nargs='?', type=float, default=None)
-    parser.add_argument('--d_thres', dest='days_thres', nargs='?', type=float, default=None)
-
+    
     parser.add_argument('--n', dest='n', nargs='?', type=int, default=5)
 
     train_group = parser.add_mutually_exclusive_group(required=False)
     train_group.add_argument('--train', dest='retrain_flag', action='store_true')
     train_group.add_argument('--no-train', dest='retrain_flag', action='store_false')
-    # parser.set_defaults(retrain_flag=True)
-    parser.set_defaults(retrain_flag=False)
-
-
-    train_group.add_argument('--pdtc', dest='pdtc_flag', action='store_true')
-    train_group.add_argument('--no-pdtc', dest='pdtc_flag', action='store_false')
-    parser.set_defaults(pdtc_flag=False)
-
-    norm_group = parser.add_mutually_exclusive_group(required=False)
-    norm_group.add_argument('--norm', dest='norm_flag', action='store_true')
-    norm_group.add_argument('--no-norm', dest='norm_flag', action='store_false')
-    parser.set_defaults(norm_flag=True)
+    parser.set_defaults(retrain_flag=True)
+    # parser.set_defaults(retrain_flag=False)
 
     
     parser.add_argument('--label_type', default = "PFS",choices=["PFS","Imaging"])
 
-    # CDR挑选TCGA检测中要用的药物作为finetune数据
-    parser.add_argument('--select_drug_method', default = "all",choices=["overlap","all","random"])
+    parser.add_argument('--select_drug_method', default = "overlap",choices=["overlap","all","random"])
     
-    parser.add_argument('--store_dir',default = "all_drug") 
+    parser.add_argument('--store_dir',default = "benchmark") 
     parser.add_argument('--select_gene_method',default = "Percent_sd",choices=["Percent_sd","HVG"])
     parser.add_argument('--select_gene_num',default = 1000,type=int)
 
@@ -292,20 +230,12 @@ if __name__ == '__main__':
         choices=["tcga", "blca", "brca", "cesc", "coad", "gbm", "hnsc", "kich", "kirc", 
         "kirp", "lgg", "lihc", "luad", "lusc", "ov", "paad", "prad", "read", "sarc", "skcm", "stad", "ucec",
         "esca","meso","ucs","acc"])
-    parser.add_argument('--tcga_construction',default = "raw",
-        choices=["raw","pseudo_random"])
-    parser.add_argument('--CCL_type',default = "all_CCL",
-        choices=["all_CCL","single_CCL"])
-    parser.add_argument('--CCL_construction',default = "raw",
-        choices=["raw","pseudo_random"])
     parser.add_argument('--tumor_type',default = "BRCA",
-        choices=["TCGA","ESCA","MESO", "UCS", "ACC","GBM", 'LGG', 'PAAD','HNSC','LIHC','KIRC','SARC','PRAD','OV',
-        'BRCA','STAD','CESC','SKCM','BLCA','LUSC','LUAD','UCEC','READ','COAD']) #19 PFS >10
+        choices=['TCGA','GBM', 'LGG', 'HNSC','KIRC','SARC','BRCA','STAD','CESC','SKCM','LUSC','LUAD','READ','COAD'
+        ]) 
     parser.add_argument('--CCL_dataset',default = 'gdsc1_raw',
-        choices=['gdsc1_raw','gdsc1_rec','gc_combine','gp_combine','gcp_combine','GDSC1_raw','GDSC1_rec','gdsc1_rebalance','gdsc1_rebalance_regression'])
+        choices=['gdsc1_raw','gdsc1_rebalance'])
     parser.add_argument('--class_num',default = 0,type=int)
-    parser.add_argument('--ccl_match',default = "yes",
-        choices=["yes","no","match_zs"])
     
     args = parser.parse_args()
 

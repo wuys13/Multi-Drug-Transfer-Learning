@@ -11,6 +11,10 @@ import itertools
 import data
 import fine_tuning
 
+# add model_train path
+import sys
+sys.path.append('../model_train')
+
 import train_ae
 import train_ae_mmd
 import train_ae_adv 
@@ -175,7 +179,7 @@ def main(args, update_params_dict):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser('ADSN training and evaluation')
+    parser = argparse.ArgumentParser('P-MDL training and evaluation')
     parser.add_argument('--params_num',default = None,type=int)
     parser.add_argument('--pretrain_num',default = None,type=int)
     parser.add_argument('--zero_shot_num',default = None,type=int)

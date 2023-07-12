@@ -101,69 +101,6 @@ def get_pretrain_dataset(patient_tumor_type,CCL_type,tumor_type,tcga_constructio
                                 index=patient_gex_new.index,columns=patient_gex_new.columns)
     return combine_gex,CCL_tumor_type,all_ccle_gex,all_patient_gex
 
-# def get_unlabeled_dataloaders(gex_features_df, seed, batch_size, ccle_only=False):
-#     """
-#     CCLE as source domain, thus s_dataloaders
-#     Xena(TCGA) as target domain, thus t_dataloaders
-#     :param gex_features_df:
-#     :param seed:
-#     :param batch_size:
-#     :return:
-#     """
-#     set_seed(seed)
-    
-#     # ccle_sample_info_df = pd.read_csv(data_config.ccle_sample_file, index_col=0)
-#     # ccle_sample_info_df = ccle_sample_info_df.reset_index().drop_duplicates(subset="Depmap_id",keep='first').set_index("Depmap_id")
-#     # xena_sample_info_df = pd.read_csv(data_config.xena_sample_file, index_col=0)
-    
-#     xena_df = gex_features_df.loc[gex_features_df.index.str.startswith('TCGA')]
-#     ccle_df = gex_features_df.loc[gex_features_df.index.str.startswith('ACH')]
-
-#     print(' ')
-#     print(f"Pretrain dataset: {xena_df.shape[0]}(TCGA) {ccle_df.shape[0]}(Cell line)")
-#     print(' ')
-
-#     #train用所有，test取10%
-#     train_xena_df, test_xena_df = train_test_split(xena_df, test_size=0.1, #len(test_ccle_df) / len(xena_df),
-#                                                    #stratify=xena_sample_info_df['_primary_disease'],
-#                                                    random_state=seed)
-#     train_ccle_df, test_ccle_df = train_test_split(ccle_df, test_size=0.1,
-#                                                    #stratify=ccle_sample_info_df.loc[to_split_ccle_df.index].primary_disease，
-#                                                    random_state=seed)
-#     xena_dataset = TensorDataset(
-#         torch.from_numpy(xena_df.values.astype('float32'))
-#     )
-#     xena_test_dataset = TensorDataset(
-#         torch.from_numpy(test_xena_df.values.astype('float32'))
-#     )
-
-#     ccle_dataset = TensorDataset(
-#         torch.from_numpy(ccle_df.values.astype('float32'))
-#     ) 
-#     ccle_test_dataset = TensorDataset(
-#         torch.from_numpy(test_ccle_df.values.astype('float32'))
-#     ) 
-
-#     xena_dataloader = DataLoader(xena_dataset,
-#                                  batch_size=batch_size,
-#                                  shuffle=True)
-    
-#     test_xena_dataloader = DataLoader(xena_test_dataset,
-#                                       batch_size=batch_size,
-#                                       shuffle=True)
-
-#     ccle_data_loader = DataLoader(ccle_dataset,
-#                                   batch_size=batch_size,
-#                                   shuffle=True
-#                                   )
-
-#     test_ccle_dataloader = DataLoader(ccle_test_dataset,
-#                                       batch_size=batch_size,
-#                                       shuffle=True)
-#     if ccle_only:
-#         return (ccle_data_loader, test_ccle_dataloader), (ccle_data_loader, test_ccle_dataloader)
-#     else:
-#         return (ccle_data_loader, test_ccle_dataloader), (xena_dataloader, test_xena_dataloader)
 
 def get_unlabeled_dataloaders(gex_features_df, seed, batch_size, ccle_only=False):
     """
