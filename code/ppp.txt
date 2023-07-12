@@ -1,9 +1,0 @@
-nohup: ignoring input
-Processed over last task
-mkdir: cannot create directory ‘../record/pdr_wanzheng_tcga’: File exists
-Processing next task: 9 all_CCL raw raw   20230506-101207
-Last process running now      20230506-101209
-Processed over last task
-mkdir: cannot create directory ‘../record/pdr_wanzheng_tcga’: File exists
-Processing next task: 10 all_CCL raw raw   20230506-111209
-Finish all !!!!
