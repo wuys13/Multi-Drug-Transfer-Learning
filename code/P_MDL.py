@@ -1,30 +1,30 @@
 import pandas as pd
+import numpy as np
+
 import torch
 import json
 import os
 import argparse
 import random
 import pickle
-from collections import defaultdict
 import itertools
-import numpy as np
 import data
-import data_config
+import fine_tuning
 
 import train_ae
 import train_ae_mmd
 import train_ae_adv 
 
+import train_dsn 
 import train_dsn_mmd
 import train_dsn_adv
-import train_dsn_adnn 
 
-import train_dsrn 
 import train_dsrn_mmd 
 import train_dsrn_adv
 
-import fine_tuning
 from copy import deepcopy
+from collections import defaultdict
+
 
 def dict_to_str(d):
     
@@ -35,7 +35,6 @@ def wrap_training_params(training_params, type='unlabeled'):
     aux_dict.update(**training_params[type])
 
     return aux_dict
-
 
 def safe_make_dir(new_folder_name):
     if not os.path.exists(new_folder_name):
@@ -73,37 +72,32 @@ def main(args, update_params_dict):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     
-    with open(os.path.join('model_save/train_params.json'), 'r') as f:
+    with open(os.path.join('params/train_params.json'), 'r') as f:
         training_params = json.load(f)
 
     training_params['unlabeled'].update(update_params_dict)   
     param_str = dict_to_str(update_params_dict)  
 
-    source_dir = os.path.join(args.pretrain_dataset,args.tcga_construction,
-                              args.select_gene_method,
-                              CCL_tumor_type,args.CCL_construction,
+    source_dir = os.path.join(args.pretrain_dataset,
                               tumor_type,
-                              args.CCL_dataset,args.select_drug_method)
+                              args.select_drug_method)
 
     store_dir = os.path.join('../results',args.store_dir)
     method_save_folder = os.path.join(store_dir, f'{args.method}_norm',source_dir)
+    task_save_folder = os.path.join(f'{method_save_folder}', args.measurement)
+    safe_make_dir(task_save_folder) #unlabel result save dir
 
     training_params.update(
         {
             'device': device,
             'input_dim': gex_features_df.shape[-1],
-            'model_save_folder': os.path.join(method_save_folder, param_str),  #一个模型就存一个unlabel model
+            'model_save_folder': os.path.join(method_save_folder, param_str),  
             'es_flag': False,
             'retrain_flag': args.retrain_flag,
             'norm_flag': args.norm_flag
         })
-    if args.pdtc_flag:
-        task_save_folder = os.path.join(f'{method_save_folder}', args.measurement, 'pdtc')
-    else:
-        task_save_folder = os.path.join(f'{method_save_folder}', args.measurement)
 
     safe_make_dir(training_params['model_save_folder'])
-    safe_make_dir(task_save_folder) #unlabel result save dir
 
     random.seed(2020)
 
@@ -114,24 +108,17 @@ def main(args, update_params_dict):
         ccle_only=False
     )
 
-    # start unlabeled training
-    ##先pretrain code_ae_base，再用adv（GAN） train；pretrain可以没有，train都有
-    encoder, historys = train_fn(s_dataloaders=s_dataloaders, #若no-train，就根据training_params中的save_folder找到对应Pretrained_model
-                                 t_dataloaders=t_dataloaders, #[0]是train,[1]是test
+    
+    encoder, historys = train_fn(s_dataloaders=s_dataloaders, 
+                                 t_dataloaders=t_dataloaders, 
                                  **wrap_training_params(training_params, type='unlabeled')) 
     print(' ')
     # print("Trained SE:",encoder)
 
-    if args.retrain_flag:
-        with open(os.path.join(training_params['model_save_folder'], f'unlabel_train_history.pickle'),
-                  'wb') as f:
-            for history in historys:
-                pickle.dump(dict(history), f)
-
     
     ft_evaluation_metrics = defaultdict(list)
 
-    ##多个药之间互相比
+    # Fine-tuning dataset
     labeled_dataloader_generator = data.get_finetune_dataloader_generator(
             gex_features_df = gex_features_df,
             all_ccle_gex = all_ccle_gex,
@@ -143,7 +130,7 @@ def main(args, update_params_dict):
             ccle_measurement=args.measurement,
             pdtc_flag=args.pdtc_flag,
             n_splits=args.n,
-            q=2, #二分类
+            q=2, 
             tumor_type = tumor_type,
             label_type = args.label_type,
             select_drug_method = args.select_drug_method)
@@ -153,9 +140,9 @@ def main(args, update_params_dict):
             ft_encoder = deepcopy(encoder)
             print(' ')
             print('Fold count = {}'.format(fold_count))
-            if args.select_drug_method == "overlap" : 
+            if args.select_drug_method == "overlap" : # only one pretraining model save for benchmark
                 save_folder = method_save_folder
-            elif args.select_drug_method == "all" : 
+            elif args.select_drug_method == "all" :  # all pretraining model save for pdr
                 save_folder = training_params['model_save_folder']
             target_classifier, ft_historys = fine_tuning.fine_tune_encoder_drug( 
                 encoder=ft_encoder,
@@ -167,8 +154,8 @@ def main(args, update_params_dict):
                 metric_name=args.metric,
                 task_save_folder = save_folder,
                 drug_emb_dim=300,
-                class_num = args.class_num, #CCL_dataset几分类，需要和train_labeled_ccle_dataloader, test_labeled_ccle_dataloader匹配
-                store_dir = method_save_folder, #store_dir,#：所有癌种都一样，所有method都一样
+                class_num = args.class_num, 
+                store_dir = method_save_folder,
                 **wrap_training_params(training_params, type='labeled')
             )
             if fold_count == 0 :
@@ -194,16 +181,14 @@ if __name__ == '__main__':
     parser.add_argument('--zero_shot_num',default = None,type=int)
     parser.add_argument('--method_num',default = None,type=int)
     
-    parser.add_argument('--method', dest='method', nargs='?', default='dsrn_adv',
-                        choices=['ae','dae','vae','ae_mmd','ae_adv', #ae_mmd:3
-                       'dsn_mmd','dsn_adv','dsn_adnn',
-                       'dsrn','dsrn_mmd','dsrn_adv','dsrn_adnn'])
+    parser.add_argument('--method', dest='method', nargs='?', default='dsn_adv',
+                        choices=['ae','ae_mmd','ae_adv',
+                                'dsn','dsn_mmd','dsn_adv',
+                                'dsrn_mmd','dsrn_adv'])
     parser.add_argument('--metric', dest='metric', nargs='?', default='auroc', choices=['auroc', 'auprc'])
 
     parser.add_argument('--measurement', dest='measurement', nargs='?', default='AUC', choices=['AUC', 'LN_IC50'])
-    parser.add_argument('--a_thres', dest='a_thres', nargs='?', type=float, default=None)
-    parser.add_argument('--d_thres', dest='days_thres', nargs='?', type=float, default=None)
-
+    
     parser.add_argument('--n', dest='n', nargs='?', type=int, default=5)
 
     train_group = parser.add_mutually_exclusive_group(required=False)
@@ -217,7 +202,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--select_drug_method', default = "overlap",choices=["overlap","all","random"])
     
-    parser.add_argument('--store_dir',default = "test") 
+    parser.add_argument('--store_dir',default = "benchmark") 
     parser.add_argument('--select_gene_method',default = "Percent_sd",choices=["Percent_sd","HVG"])
     parser.add_argument('--select_gene_num',default = 1000,type=int)
 
@@ -225,48 +210,27 @@ if __name__ == '__main__':
         choices=["tcga", "blca", "brca", "cesc", "coad", "gbm", "hnsc", "kich", "kirc", 
         "kirp", "lgg", "lihc", "luad", "lusc", "ov", "paad", "prad", "read", "sarc", "skcm", "stad", "ucec",
         "esca","meso","ucs","acc"])
-    parser.add_argument('--tcga_construction',default = "raw",
-        choices=["raw","pseudo_random"])
-    parser.add_argument('--CCL_type',default = "all_CCL",
-        choices=["all_CCL","single_CCL"])
-    parser.add_argument('--CCL_construction',default = "raw",
-        choices=["raw","pseudo_random"])
     parser.add_argument('--tumor_type',default = "BRCA",
-        choices=["TCGA","ESCA","MESO", "UCS", "ACC","GBM", 'LGG', 'PAAD','HNSC','LIHC','KIRC','SARC','PRAD','OV',
-        'BRCA','STAD','CESC','SKCM','BLCA','LUSC','LUAD','UCEC','READ','COAD']) 
+        choices=['TCGA','GBM', 'LGG', 'HNSC','KIRC','SARC','BRCA','STAD','CESC','SKCM','LUSC','LUAD','READ','COAD'
+        ]) 
     parser.add_argument('--CCL_dataset',default = 'gdsc1_raw',
-        choices=['gdsc1_raw','gdsc1_rec','gc_combine','gp_combine','gcp_combine','GDSC1_raw','GDSC1_rec','gdsc1_rebalance','gdsc1_rebalance_regression'])
+        choices=['gdsc1_raw','gdsc1_rebalance'])
     parser.add_argument('--class_num',default = 0,type=int)
-    parser.add_argument('--ccl_match',default = "yes",
-        choices=["yes","no","match_zs"])
     
     args = parser.parse_args()
     if args.class_num == 1:
         # args.CCL_dataset = f"{args.CCL_dataset}_regression"
         print("Regression task.  Use dataset:",args.CCL_dataset)
 
-    if args.select_drug_method == "all" :
-         params_grid = {
-        "pretrain_num_epochs": [0,100,300],  # encoder、decoder
-        "train_num_epochs": [100,1000,2000,3000],   # GAN
-        "dop":  [0.0,0.1]
-    } 
-    else:
-        params_grid = {
+    params_grid = {
             "pretrain_num_epochs": [0, 100, 300],
             "train_num_epochs": [100, 200, 300, 500, 750, 1000, 1500, 2000, 2500, 3000],
             "dop": [0.0, 0.1]
         }
 
-    params_grid = {
-            "pretrain_num_epochs": [0,200,400,600,800,1000], #[0, 100, 300],
-            "train_num_epochs": [100, 200, 300, 500, 750, 1000, 1500, 2000, 2500, 3000],
-            "dop": [0.0, 0.1]
-        }
     
-    Tumor_type_list = ["tcga", "blca", "brca", "cesc", "coad", "gbm", "hnsc", "kich", "kirc", 
-            "kirp", "lgg", "lihc", "luad", "lusc", "ov", "paad", "prad", "read", "sarc", "skcm", "stad", #"ucec",
-            "esca","meso","ucs","acc"] #1+20+4
+    Tumor_type_list = ["tcga", "brca", "cesc", "coad", "gbm", "hnsc", "kich", "kirc", 
+            "kirp", "lgg", "lihc", "luad", "lusc", "ov", "paad", "prad", "read", "sarc", "skcm", "stad"] 
     
     if args.pretrain_num :
         args.pretrain_dataset = Tumor_type_list[args.pretrain_num] #24
@@ -274,16 +238,13 @@ if __name__ == '__main__':
         args.tumor_type = [element.upper() for element in Tumor_type_list][args.zero_shot_num]
         # print(f'Tumor type:  Select zero_shot_num: {Num}. Zero-shot dataset: {args.tumor_type}')
     if args.method_num : 
-        # args.method = ['ae','dae','vae','ae_mmd','ae_adv', #ae_mmd:3
-        #                'dsn_mmd','dsn_adv','dsn_adnn',
-        #                'dsrn','dsrn_mmd','dsrn_adv','dsrn_adnn'][args.method_num] #0-11
-        args.method = ['dsn_adnn',  #'dsrn_adnn',
-                       'ae','dae','vae','dsrn', 
-                       'ae_mmd','dsn_mmd','dsrn_mmd',
-                       'ae_adv','dsn_adv','dsrn_adv'][args.method_num] #0-11
+        args.method = [
+                       'ae','dsn', 
+                       'ae_mmd','dsrn_mmd','dsn_mmd',
+                       'ae_adv','dsrn_adv','dsn_adv'][args.method_num]
     
-    #tcga pretrain需要根据args.tumor_type去指定finetune哪个癌种，其他的默认先是原癌种
-    tumor_type = args.pretrain_dataset.upper() #需要交叉的时候注释掉这行，直接让【tumor_type = args.tumor_type】自由选择
+    # Test-pairwise pre-training set pretrain_dataset and test_dataset to the same tumor type in default
+    tumor_type = args.pretrain_dataset.upper() 
     if tumor_type == "TCGA" : 
         tumor_type = args.tumor_type
 
@@ -294,7 +255,6 @@ if __name__ == '__main__':
     update_params_dict_list = [dict(zip(keys, v)) for v in itertools.product(*values)]
 
 
-    #构建4级文件夹结构，并生成用于unlabel training需要的gex_features_df------
     gex_features_df,CCL_tumor_type,all_ccle_gex,_ = data.get_pretrain_dataset(
         patient_tumor_type = args.pretrain_dataset,
         CCL_type = args.CCL_type,
@@ -312,7 +272,6 @@ if __name__ == '__main__':
     print(f'pdtc_flag: {args.pdtc_flag}. method: {args.method}({args.method_num}). label_type: {args.label_type}')
     param_num = 0
 
-    # os.environ['CUDA_VISIBLE_DEVICES'] = '1'
     # update_params_dict_list.reverse()
     if args.params_num : 
         update_params_dict_list = update_params_dict_list[args.params_num:]
