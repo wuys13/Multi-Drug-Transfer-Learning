@@ -1,0 +1,27 @@
+Regression task.  Use dataset: gdsc1_raw_regression
+Starting generating pretrain dataset...
+Traceback (most recent call last):
+  File "0_TT_ft_hyper_main_1.py", line 350, in <module>
+    gex_features_df,CCL_tumor_type,all_ccle_gex = data.get_pretrain_dataset(
+  File "/home/wuys/pdr3/code/data.py", line 39, in get_pretrain_dataset
+    patient_gex_raw = pd.read_csv("../data/preprocessed_dat/xena_gex_raw.csv", index_col=0)  #9808TCGA_sample * 18966HVG(overlap)
+  File "/opt/conda/envs/python3.8/lib/python3.8/site-packages/pandas/util/_decorators.py", line 211, in wrapper
+    return func(*args, **kwargs)
+  File "/opt/conda/envs/python3.8/lib/python3.8/site-packages/pandas/util/_decorators.py", line 331, in wrapper
+    return func(*args, **kwargs)
+  File "/opt/conda/envs/python3.8/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 950, in read_csv
+    return _read(filepath_or_buffer, kwds)
+  File "/opt/conda/envs/python3.8/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 611, in _read
+    return parser.read(nrows)
+  File "/opt/conda/envs/python3.8/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 1778, in read
+    ) = self._engine.read(  # type: ignore[attr-defined]
+  File "/opt/conda/envs/python3.8/lib/python3.8/site-packages/pandas/io/parsers/c_parser_wrapper.py", line 230, in read
+    chunks = self._reader.read_low_memory(nrows)
+  File "pandas/_libs/parsers.pyx", line 808, in pandas._libs.parsers.TextReader.read_low_memory
+  File "pandas/_libs/parsers.pyx", line 890, in pandas._libs.parsers.TextReader._read_rows
+  File "pandas/_libs/parsers.pyx", line 1037, in pandas._libs.parsers.TextReader._convert_column_data
+  File "pandas/_libs/parsers.pyx", line 1083, in pandas._libs.parsers.TextReader._convert_tokens
+  File "pandas/_libs/parsers.pyx", line 1158, in pandas._libs.parsers.TextReader._convert_with_dtype
+  File "/opt/conda/envs/python3.8/lib/python3.8/site-packages/pandas/core/dtypes/common.py", line 1433, in is_extension_array_dtype
+    def is_extension_array_dtype(arr_or_dtype) -> bool:
+KeyboardInterrupt
