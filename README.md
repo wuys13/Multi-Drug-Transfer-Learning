@@ -14,7 +14,7 @@ Pre-clinical drug discovery (PDD) faces the low efficiency dilemma. One of the r
 Artificial intelligence (AI) models used for drug response prediction (DRP) tasks are generally classified into Single-Drug learning (SDL) and Multi-Drug Learning (MDL) paradigms. SDL paradigms have been adapted to the patient level and evaluate within-drug response, disregarding tumor types. However, there exist substantial differences in treatment response and survival outcomes among different tumor types, indicating that tumor type is a crucial confounding factor that can not be overlooked when predicting drug response. Additionally, SDL paradigms fail to assess cross-drug response, while MDL paradigms are currently limited to the cell line level. Therefore, we propose the P-MDL approach, which aims to achieve a comprehensive view of drug response at the patient level.
 
 <p align="center">
-    <img src="./png/1_AI_DRP_model.png" alt="DRP paradigms and limitations" width="400" height="300">
+    <img src="./png/1_AI_DRP_model.png" alt="DRP paradigms and limitations" width="600" height="450">
 </p>
 
 <!-- ![DRP paradigms and limitations](./png/1_AI_DRP_model.png){: width="400px" height="300px"} -->
@@ -24,7 +24,7 @@ We constructed the first P-MDL dataset from publicly available data. Tumor types
 
 <!-- ![P-MDL dataset spanning 13 tumor types](./png/2_P-MDL_dataset.png) -->
 <p align="center">
-    <img src="./png/2_P-MDL_dataset.png" alt="P-MDL dataset spanning 13 tumor types" width="800" height="640">
+    <img src="./png/2_P-MDL_dataset.png" alt="P-MDL dataset spanning 13 tumor types" width="600" height="480">
 </p>
 
 
@@ -49,7 +49,7 @@ Take tumor type COAD as an example, most drugs were inefficient, but a few drugs
 
 <!-- ![PDR score and analysis](./png/5_PDR_result.png){: width="200px" height="100px"} -->
 <p align="center">
-    <img src="./png/5_PDR_result.png" alt="PDR score and analysis" width="400" height="300">
+    <img src="./png/5_PDR_result.png" alt="PDR score and analysis" width="400" height="200">
 </p>
 
 
