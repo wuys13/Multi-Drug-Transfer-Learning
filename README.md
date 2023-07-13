@@ -13,7 +13,9 @@ Pre-clinical drug discovery (PDD) faces the low efficiency dilemma. One of the r
 ### P-MDL task
 Artificial intelligence (AI) models used for drug response prediction (DRP) tasks are generally classified into Single-Drug learning (SDL) and Multi-Drug Learning (MDL) paradigms. SDL paradigms have been adapted to the patient level and evaluate within-drug response, disregarding tumor types. However, there exist substantial differences in treatment response and survival outcomes among different tumor types, indicating that tumor type is a crucial confounding factor that can not be overlooked when predicting drug response. Additionally, SDL paradigms fail to assess cross-drug response, while MDL paradigms are currently limited to the cell line level. Therefore, we propose the P-MDL approach, which aims to achieve a comprehensive view of drug response at the patient level.
 
-![DRP paradigms and limitations](./png/1_AI_DRP_model.png){: width="400px" height="300px"}
+<img src="./png/1_AI_DRP_model.png" alt="DRP paradigms and limitations" width="400" height="300">
+
+<!-- ![DRP paradigms and limitations](./png/1_AI_DRP_model.png){: width="400px" height="300px"} -->
 
 ### P-MDL dataset
 We constructed the first P-MDL dataset from publicly available data. Tumor types with relatively sufficient data were filtered out. Finally, 13 tumor types were selected for the P-MDL dataset.
