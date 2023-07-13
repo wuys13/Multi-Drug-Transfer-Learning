@@ -13,12 +13,12 @@ Pre-clinical drug discovery (PDD) faces the low efficiency dilemma. One of the r
 ### P-MDL task
 Artificial intelligence (AI) models used for drug response prediction (DRP) tasks are generally classified into Single-Drug learning (SDL) and Multi-Drug Learning (MDL) paradigms. SDL paradigms have been adapted to the patient level and evaluate within-drug response, disregarding tumor types. However, there exist substantial differences in treatment response and survival outcomes among different tumor types, indicating that tumor type is a crucial confounding factor that can not be overlooked when predicting drug response. Additionally, SDL paradigms fail to assess cross-drug response, while MDL paradigms are currently limited to the cell line level. Therefore, we propose the P-MDL approach, which aims to achieve a comprehensive view of drug response at the patient level.
 
-![DRP paradigms and limitations](./png/1_AI_DRP_model.png)
+![DRP paradigms and limitations](./png/1_AI_DRP_model.png){: width="400px" height="300px"}
 
 ### P-MDL dataset
 We constructed the first P-MDL dataset from publicly available data. Tumor types with relatively sufficient data were filtered out. Finally, 13 tumor types were selected for the P-MDL dataset.
 
-![P-MDL dataset spanning 13 tumor types](./png/2_P-MDL_dataset.png)
+![P-MDL dataset spanning 13 tumor types](./png/2_P-MDL_dataset.png){: width="400px" height="600px"}
 
 ### P-MDL model zoo
 
@@ -39,7 +39,7 @@ P-MDL model zoo includes eight models employing different transfer learning meth
 To further validate the P-MDL models and demonstrate their potential in PDD applications, the test-pairwise pre-trained DSN-adv model was used to screen 233 small molecules for patients of 13 tumor types.
 Take tumor type COAD as an example, most drugs were inefficient, but a few drugs showed potential efficacy for over half of COAD patients.
 
-![PDR score and analysis](./png/5_PDR_result.png)
+![PDR score and analysis](./png/5_PDR_result.png){: width="200px" height="100px"}
 
 
 ## Installation
