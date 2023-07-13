@@ -22,7 +22,11 @@ Artificial intelligence (AI) models used for drug response prediction (DRP) task
 ### P-MDL dataset
 We constructed the first P-MDL dataset from publicly available data. Tumor types with relatively sufficient data were filtered out. Finally, 13 tumor types were selected for the P-MDL dataset.
 
-![P-MDL dataset spanning 13 tumor types](./png/2_P-MDL_dataset.png)
+<!-- ![P-MDL dataset spanning 13 tumor types](./png/2_P-MDL_dataset.png) -->
+<p align="center">
+    <img src="./png/2_P-MDL_dataset.png" alt="P-MDL dataset spanning 13 tumor types" width="800" height="640">
+</p>
+
 
 ### P-MDL model zoo
 
