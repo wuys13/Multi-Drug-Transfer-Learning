@@ -52,7 +52,7 @@ P-MDL model zoo includes eight models employing different transfer learning meth
 - **dsrn-mmd**: **dsrn** model added with another **mmd-loss**.
 - **dsrn-adv**: **dsrn** model added with another **adv-loss**. -->
 
-![P-MDL model zoo architecture](./png/3_P-DML_model_zoo.png)
+<!-- ![P-MDL model zoo architecture](./png/3_P-DML_model_zoo.png) -->
 
 ### Patient Drug Response (PDR) prediction for PDD
 To further validate the P-MDL models and demonstrate their potential in PDD applications, the test-pairwise pre-trained DSN-adv model was used to screen 233 small molecules for patients of 13 tumor types.
@@ -124,7 +124,7 @@ As a pre-alpha version release, we are looking forward to user feedback to help 
 
 If you find our open-sourced code & models helpful to your research, please consider giving this repo a star🌟 and citing📑 the following article. Thank you for your support!
 ```
-@misc{OpenBioMed_code,
+@misc{P_MDL_code,
   author={Yushuai Wu},
   title={Code of Multi-Drug-Transfer-Learning},
   year={2023},
