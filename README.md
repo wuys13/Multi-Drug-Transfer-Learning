@@ -81,7 +81,7 @@ pip install sklearn
 
 ## Quick Start
 
-Here, we provide a quick example.
+Here, we provide the instruction for a quick start.
 
 
 <!-- This quick example requires installation of an additional package:
@@ -105,7 +105,7 @@ mv [your_path_of_davis] ./dti/davis
 
 ### Step 2: Training and Evaluation
 
-The script [P_MDL.py](./code/P_MDL.py) executes pre-training, fine-tuning and zero-shot testing procedures. For convenience, you can run the bash file [run_pretrain.sh](./code/run_pretrain.sh) by ```nohup bash run_pdr_task.sh 1>pdr_task.txt 2>&1 &```. Then you can find model Log output in ``records/`` folder and model evaluation results in ``results`` folder.
+The script [P_MDL.py](./code/P_MDL.py) executes pre-training, fine-tuning and zero-shot testing procedures. For convenience, you can run the bash file [run_pretrain.sh](./code/run_pretrain.sh) by ```nohup bash run_pdr_task.sh 1>pdr_task.txt 2>&1 &```. Then you can find model Log output in ``records/`` folder and model evaluation results in ``results/`` folder.
 
 
 <!-- Run:
