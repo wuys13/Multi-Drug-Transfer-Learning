@@ -74,24 +74,27 @@ conda activate P-MDL
 conda install -c conda-forge rdkit
 
 pip install torch
-
+pip install pandas
+pip install numpy
+pip install sklearn
 ```
 
 ## Quick Start
 
 Here, we provide a quick example.
 
-This quick example requires installation of an additional package:
+
+<!-- This quick example requires installation of an additional package:
 ```bash
 git clone https://github.com/wuys13/Multi-Drug-Transfer-Learning.git
 cd code
 python setup.py install
 cd ..
-```
+``` -->
 
 ### Step 1: Data Preparation
 
-Download the P-MDL dataset [here](https://zenodo.org/record/8021167).
+Download the data at Zenodo [here](https://zenodo.org/record/8021167). Move the download files to ``data/`` folder.
 
 <!-- ```
 mkdir datasets
@@ -101,6 +104,9 @@ mv [your_path_of_davis] ./dti/davis
 ``` -->
 
 ### Step 2: Training and Evaluation
+
+The script [P_MDL.py](./code/P_MDL.py) executes pre-training, fine-tuning and zero-shot testing procedures. For convenience, you can run the bash file [run_pretrain.sh](./code/run_pretrain.sh) by ```nohup bash run_pdr_task.sh 1>pdr_task.txt 2>&1 &```. Then you can find model Log output in ``records/`` folder and model evaluation results in ``results`` folder.
+
 
 <!-- Run:
 
@@ -114,6 +120,14 @@ The results will look like the following (running takes around 40 minutes on an 
 ```bash
 INFO - __main__ - MSE: 0.2198, Pearson: 0.8529, Spearman: 0.7031, CI: 0.8927, r_m^2: 0.6928
 ``` -->
+
+### Step 3: Interfence for PDD application
+
+For PDD application, we need to predict the efficacy of all drugs to every patients. So here we set the params ``--select_drug_method all`` to recover the model which can be used for all-drug response prediction. For convenience, you can run the bash file [run_pretrain_for_pdr.sh](./code/run_pretrain_for_pdr.sh) by ```nohup bash run_pretrain_for_pdr.sh 1>pdr_pretrain.txt 2>&1 &```.
+
+Then you can run the bash file [run_pdr_task.sh](./code/run_pdr_task.sh) by ```nohup bash run_pdr_task.sh 1>pdr_task.txt 2>&1 &```, which will call the script [PDR_task.py](./code/PDR_task.py) to predict the efficacy of all drugs to every patients.
+
+
 
 ## Contact Us
 

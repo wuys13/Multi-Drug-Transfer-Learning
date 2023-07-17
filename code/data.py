@@ -1,4 +1,3 @@
-import gzip
 import os
 import random
 
@@ -28,15 +27,15 @@ def select_gene(gex,gene_num,method = "Percent_sd"):
         cancer_unique = gex.apply(unique_percent)
         cancer_sd = gex.apply(np.std)
         percent_sd = cancer_unique*cancer_sd
-    else: #目前暂不实现 To do:
+    else: #To do: Other methods for choice
         raise NotImplementedError("Only support Percent_sd now")
     return percent_sd.sort_values(ascending=False).index[:gene_num].values
 
-def get_pretrain_dataset(patient_tumor_type,CCL_type,tumor_type,tcga_construction,CCL_construction,gene_num,select_gene_method):
+def get_pretrain_dataset(patient_tumor_type,gene_num,select_gene_method):
     print("Starting generating pretrain dataset...")
     #Step1:Load gex and sample info file
-    patient_gex_raw = pd.read_csv("../data/preprocessed_dat/xena_gex_raw.csv", index_col=0)  #9808TCGA_sample * 18966HVG(overlap)
-    ccle_gex_raw = pd.read_csv("../data/preprocessed_dat/ccle_gex_raw.csv", index_col=0)  #1305CCL_sample * 18966HVG(overlap)
+    patient_gex_raw = pd.read_csv("../data/preprocessed_dat/xena_gex_raw.csv", index_col=0)  
+    ccle_gex_raw = pd.read_csv("../data/preprocessed_dat/ccle_gex_raw.csv", index_col=0) 
 
     patient_sample_info = pd.read_csv("../data/preprocessed_dat/xena_sample_info.csv", index_col=0) 
     ccle_sample_info = pd.read_csv("../data/preprocessed_dat/ccle_sample_info.csv", index_col=0) 
@@ -50,17 +49,9 @@ def get_pretrain_dataset(patient_tumor_type,CCL_type,tumor_type,tcga_constructio
         patient_samples = patient_gex_raw.index.intersection(patient_sample_info.loc[patient_sample_info.tumor_type == patient_tumor_type].index)
         patient_gex = patient_gex_raw.loc[patient_samples]
 
-    if CCL_type == "all_CCL":
-        ccle_gex = ccle_gex_raw
-        CCL_tumor_type = CCL_type
-    else:
-        if patient_tumor_type == "TCGA":
-            CCL_tumor_type = tumor_type
-        else:
-            CCL_tumor_type = patient_tumor_type
-        ccle_samples = ccle_gex_raw.index.intersection(ccle_sample_info.loc[ccle_sample_info.tumor_type == CCL_tumor_type].index)
-        ccle_gex = ccle_gex_raw.loc[ccle_samples]
-        CCL_tumor_type = CCL_tumor_type.lower()
+    ccle_gex = ccle_gex_raw
+    CCL_tumor_type = CCL_type
+   
     print(f"Step2 after locate dim: patient({patient_gex.shape[0]}); ccle({ccle_gex.shape[0]})")
     print(f"Define CCL_tumor_type: {CCL_tumor_type}")
 

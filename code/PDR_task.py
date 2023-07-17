@@ -196,7 +196,6 @@ def main(args, update_params_dict):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('PDR task')
-    parser.add_argument('--params_num',default = None,type=int)
     parser.add_argument('--pretrain_num',default = None,type=int)
     parser.add_argument('--zero_shot_num',default = None,type=int)
     parser.add_argument('--method_num',default = None,type=int)
@@ -227,9 +226,9 @@ if __name__ == '__main__':
     parser.add_argument('--select_gene_num',default = 1000,type=int)
 
     parser.add_argument('--pretrain_dataset',default = "tcga",
-        choices=["tcga", "blca", "brca", "cesc", "coad", "gbm", "hnsc", "kich", "kirc", 
-        "kirp", "lgg", "lihc", "luad", "lusc", "ov", "paad", "prad", "read", "sarc", "skcm", "stad", "ucec",
-        "esca","meso","ucs","acc"])
+        choices=["tcga",  "brca", "cesc", "coad", "gbm", "hnsc", "kirc", 
+         "lgg",  "luad", "lusc","paad",  "read", "sarc", "skcm", "stad"
+         ])
     parser.add_argument('--tumor_type',default = "BRCA",
         choices=['TCGA','GBM', 'LGG', 'HNSC','KIRC','SARC','BRCA','STAD','CESC','SKCM','LUSC','LUAD','READ','COAD'
         ]) 
@@ -244,14 +243,10 @@ if __name__ == '__main__':
         "train_num_epochs": [100, 200, 300, 500, 750, 1000, 1500, 2000, 2500, 3000],
         "dop": [0.0, 0.1]
     }
-    # params_grid = {
-    #     "pretrain_num_epochs": [0,100,300],  # encoder、decoder
-    #     "train_num_epochs": [100,1000,2000,3000],   # GAN
-    #     "dop":  [0.0,0.1]
-    # }   
-    Tumor_type_list = ["tcga", "blca", "brca", "cesc", "coad", "gbm", "hnsc", "kich", "kirc", 
-            "kirp", "lgg", "lihc", "luad", "lusc", "ov", "paad", "prad", "read", "sarc", "skcm", "stad", #"ucec",
-            "esca","meso","ucs","acc"] #1+20+4
+ 
+    Tumor_type_list = ["tcga",  "brca", "cesc", "coad", "gbm", "hnsc", "kirc", 
+         "lgg",  "luad", "lusc","paad",  "read", "sarc", "skcm", "stad"
+         ] 
     
     if args.pretrain_num :
         args.pretrain_dataset = Tumor_type_list[args.pretrain_num] #24
@@ -259,13 +254,10 @@ if __name__ == '__main__':
         args.tumor_type = [element.upper() for element in Tumor_type_list][args.zero_shot_num]
         # print(f'Tumor type:  Select zero_shot_num: {Num}. Zero-shot dataset: {args.tumor_type}')
     if args.method_num : 
-        args.method = ['ae','dae','vae','ae_mmd','ae_adv', #ae_mmd:3
-                       'dsn_mmd','dsn_adv','dsn_adnn',
-                       'dsrn','dsrn_mmd','dsrn_adv','dsrn_adnn'][args.method_num] #0-11
-        args.method = ['dsn_adnn',#'dsrn_adnn',
-                       'ae','dae','vae','dsrn', 
-                       'ae_mmd','dsn_mmd','dsrn_mmd',
-                       'ae_adv','dsn_adv','dsrn_adv'][args.method_num] #0-11
+        args.method = [
+                       'ae','dsn', 
+                       'ae_mmd','dsrn_mmd','dsn_mmd',
+                       'ae_adv','dsrn_adv','dsn_adv'][args.method_num]
     
     #tcga pretrain需要根据args.tumor_type去指定finetune哪个癌种，其他的默认先是原癌种
     tumor_type = args.pretrain_dataset.upper() #需要交叉的时候注释掉这行，直接让【tumor_type = args.tumor_type】自由选择

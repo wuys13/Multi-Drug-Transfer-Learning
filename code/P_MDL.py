@@ -180,7 +180,6 @@ def main(args, update_params_dict):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('P-MDL training and evaluation')
-    parser.add_argument('--params_num',default = None,type=int)
     parser.add_argument('--pretrain_num',default = None,type=int)
     parser.add_argument('--zero_shot_num',default = None,type=int)
     parser.add_argument('--method_num',default = None,type=int)
@@ -211,9 +210,9 @@ if __name__ == '__main__':
     parser.add_argument('--select_gene_num',default = 1000,type=int)
 
     parser.add_argument('--pretrain_dataset',default = "tcga",
-        choices=["tcga", "blca", "brca", "cesc", "coad", "gbm", "hnsc", "kich", "kirc", 
-        "kirp", "lgg", "lihc", "luad", "lusc", "ov", "paad", "prad", "read", "sarc", "skcm", "stad", "ucec",
-        "esca","meso","ucs","acc"])
+        choices=["tcga",  "brca", "cesc", "coad", "gbm", "hnsc", "kirc", 
+         "lgg",  "luad", "lusc","paad",  "read", "sarc", "skcm", "stad"
+         ])
     parser.add_argument('--tumor_type',default = "BRCA",
         choices=['TCGA','GBM', 'LGG', 'HNSC','KIRC','SARC','BRCA','STAD','CESC','SKCM','LUSC','LUAD','READ','COAD'
         ]) 
@@ -233,11 +232,11 @@ if __name__ == '__main__':
         }
 
     
-    Tumor_type_list = ["tcga", "brca", "cesc", "coad", "gbm", "hnsc", "kich", "kirc", 
-            "kirp", "lgg", "lihc", "luad", "lusc", "ov", "paad", "prad", "read", "sarc", "skcm", "stad"] 
-    
+    Tumor_type_list = ["tcga",  "brca", "cesc", "coad", "gbm", "hnsc", "kirc", 
+         "lgg",  "luad", "lusc","paad",  "read", "sarc", "skcm", "stad"
+         ] 
     if args.pretrain_num :
-        args.pretrain_dataset = Tumor_type_list[args.pretrain_num] #24
+        args.pretrain_dataset = Tumor_type_list[args.pretrain_num] 
     if args.zero_shot_num :
         args.tumor_type = [element.upper() for element in Tumor_type_list][args.zero_shot_num]
         # print(f'Tumor type:  Select zero_shot_num: {Num}. Zero-shot dataset: {args.tumor_type}')
@@ -261,11 +260,9 @@ if __name__ == '__main__':
 
     gex_features_df,CCL_tumor_type,all_ccle_gex,_ = data.get_pretrain_dataset(
         patient_tumor_type = args.pretrain_dataset,
-        CCL_type = args.CCL_type,
         tumor_type = tumor_type,
-        tcga_construction = args.tcga_construction,
-        CCL_construction = args.CCL_construction,
-        gene_num = args.select_gene_num,select_gene_method = args.select_gene_method
+        gene_num = args.select_gene_num,
+        select_gene_method = args.select_gene_method
         )
 
     print(f'Pretrain dataset: Patient({args.pretrain_dataset} {args.pretrain_num} {args.tcga_construction}) CCL({args.CCL_type} {CCL_tumor_type} {args.CCL_construction}). Select_gene_method: {args.select_gene_method}')
@@ -277,9 +274,6 @@ if __name__ == '__main__':
     param_num = 0
 
     # update_params_dict_list.reverse()
-    if args.params_num : 
-        update_params_dict_list = update_params_dict_list[args.params_num:]
-        print(f'params: {update_params_dict_list}.')
 
     for param_dict in update_params_dict_list:
             param_num = param_num + 1
