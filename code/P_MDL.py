@@ -126,13 +126,11 @@ def main(args, update_params_dict):
     labeled_dataloader_generator = data.get_finetune_dataloader_generator(
             gex_features_df = gex_features_df,
             all_ccle_gex = all_ccle_gex,
-            ccl_match = args.ccl_match,
             seed=2020,
             batch_size=training_params['labeled']['batch_size'],
             dataset = args.CCL_dataset, #finetune_dataset
-            sample_size = 0.006,
+            # sample_size = 0.006,
             ccle_measurement=args.measurement,
-            pdtc_flag=args.pdtc_flag,
             n_splits=args.n,
             q=2, 
             tumor_type = tumor_type,
@@ -200,6 +198,10 @@ if __name__ == '__main__':
     parser.set_defaults(retrain_flag=True)
     # parser.set_defaults(retrain_flag=False)
 
+    norm_group = parser.add_mutually_exclusive_group(required=False)
+    norm_group.add_argument('--norm', dest='norm_flag', action='store_true')
+    norm_group.add_argument('--no-norm', dest='norm_flag', action='store_false')
+    parser.set_defaults(norm_flag=True)
     
     parser.add_argument('--label_type', default = "PFS",choices=["PFS","Imaging"])
 
@@ -258,19 +260,15 @@ if __name__ == '__main__':
     update_params_dict_list = [dict(zip(keys, v)) for v in itertools.product(*values)]
 
 
-    gex_features_df,CCL_tumor_type,all_ccle_gex,_ = data.get_pretrain_dataset(
-        patient_tumor_type = args.pretrain_dataset,
-        tumor_type = tumor_type,
-        gene_num = args.select_gene_num,
-        select_gene_method = args.select_gene_method
-        )
+    gex_features_df = pd.read_csv(f'../data/pretrain_data/{args.pretrain_dataset}_pretrain_dataset.csv',index_col=0)
+    CCL_tumor_type = 'all_CCL'
 
-    print(f'Pretrain dataset: Patient({args.pretrain_dataset} {args.pretrain_num} {args.tcga_construction}) CCL({args.CCL_type} {CCL_tumor_type} {args.CCL_construction}). Select_gene_method: {args.select_gene_method}')
+    print(f'Pretrain dataset: Patient({args.pretrain_dataset} {args.pretrain_num}) CCL({args.CCL_type} {CCL_tumor_type}). Select_gene_method: {args.select_gene_method}')
     print(f'Zero-shot dataset: {tumor_type}({args.zero_shot_num})')
     print(f'CCL_dataset: {args.CCL_dataset}  Select_drug_method: {args.select_drug_method}')
     print(f'Store_dir: {args.store_dir} ')
     
-    print(f'pdtc_flag: {args.pdtc_flag}. method: {args.method}({args.method_num}). label_type: {args.label_type}')
+    print(f'method: {args.method}({args.method_num}). label_type: {args.label_type}')
     param_num = 0
 
     # update_params_dict_list.reverse()

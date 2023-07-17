@@ -1,8 +1,8 @@
-from evaluation_utils import evaluate_target_classification_epoch_1,model_save_check_1, predict_target_classification,predict_pdr_score
+from evaluation_utils import evaluate_target_classification_epoch,model_save_check, predict_target_classification,predict_pdr_score
 from collections import defaultdict
 from itertools import chain
 from mlp import MLP
-from encoder_decoder import EncoderDecoder , EncoderDecoder_1
+from encoder_decoder import EncoderDecoder 
 import os
 import torch
 import torch.nn as nn
@@ -31,8 +31,6 @@ def classification_train_step(model, batch, loss_fn, device, optimizer, history,
 
 
 
-
-
 def fine_tune_encoder_drug(encoder, train_dataloader, val_dataloader, fold_count,store_dir, task_save_folder,test_dataloader=None,
                       metric_name='auroc',
                       class_num = 2,
@@ -49,10 +47,9 @@ def fine_tune_encoder_drug(encoder, train_dataloader, val_dataloader, fold_count
                          output_dim=finetune_output_dim,
                          hidden_dims=kwargs['classifier_hidden_dims']).to(kwargs['device'])
     
-    target_classifier = EncoderDecoder_1(encoder=encoder, decoder=target_decoder, 
+    target_classifier = EncoderDecoder(encoder=encoder, decoder=target_decoder, 
                                         normalize_flag=normalize_flag).to(kwargs['device'])
-    ##target_decoder load一下，可能训练收敛更快？
-    ##而且GEX的隐层和药物在不同癌症间dim统一，故只需要调用一个就行
+    # target_decoder load to re-train faster
     target_classifier_file = os.path.join(store_dir, 'save_classifier_0.pt')
     if os.path.exists(target_classifier_file) and fold_count>0:
         print("Loading ",target_classifier_file)
@@ -119,21 +116,21 @@ def fine_tune_encoder_drug(encoder, train_dataloader, val_dataloader, fold_count
                                                                                            test_flag=True)
         save_flag, stop_flag = model_save_check_1(history=target_classification_eval_val_history,
                                                 metric_name=metric_name,
-                                                tolerance_count=5, #10次更新没有提高就stop_flag一次
+                                                tolerance_count=5, # stop_flag once 5 epochs not better
                                                 reset_count=reset_count)
         test_metric = target_classification_eval_test_history[metric_name][target_classification_eval_val_history['best_index']]
         if epoch % 50 == 0:
             print(f'Fine tuning epoch {epoch}. stop_flag_num: {stop_flag_num}. {test_metric}')
             # print(save_flag, stop_flag,stop_flag_num)
-        if save_flag: #这个epoch比之前的都好，就存；10次之后就stop，stop用逐层解冻3次encoder的全连接层
+        if save_flag: 
             torch.save(target_classifier.state_dict(),
-                       os.path.join(task_save_folder, f'target_classifier_{fold_count}.pt'))  #存下所有超参（pre[train]epoch,dop）中AUC最大的模型
+                       os.path.join(task_save_folder, f'target_classifier_{fold_count}.pt'))  # save model
             # print("Save model. ",test_metric,epoch)
             if to_roughly_test:
                 print("To roughly test pass, just get the zero-shot metric at the begining for judge.")
                 break
             pass
-        if stop_flag: #全连接层为3层，pop4次会IndexError（ind异常）退出 【for epoch in range(kwargs['train_num_epochs']): 】的循环
+        if stop_flag: 
             stop_flag_num = stop_flag_num+1
             print(' ')
             try:
@@ -191,7 +188,7 @@ def fine_tune_2(encoder, train_dataloader, val_dataloader, fold_count,store_dir,
                          output_dim=finetune_output_dim,
                          hidden_dims=kwargs['classifier_hidden_dims']).to(kwargs['device'])
     
-    target_classifier = EncoderDecoder_1(encoder=encoder, decoder=target_decoder, 
+    target_classifier = EncoderDecoder(encoder=encoder, decoder=target_decoder, 
                                         normalize_flag=normalize_flag).to(kwargs['device'])
     ##target_decoder load一下，可能训练收敛更快？
     ##而且GEX的隐层和药物在不同癌症间dim统一，故只需要调用一个就行
@@ -342,7 +339,7 @@ def predict_pdr(encoder,  fold_count, task_save_folder, test_dataloader=None,
                          output_dim=finetune_output_dim,
                          hidden_dims=kwargs['classifier_hidden_dims']).to(kwargs['device'])
 
-    target_classifier = EncoderDecoder_1(encoder=encoder, decoder=target_decoder, 
+    target_classifier = EncoderDecoder(encoder=encoder, decoder=target_decoder, 
                                         normalize_flag=normalize_flag).to(kwargs['device'])
     target_classifier.load_state_dict(
             torch.load(os.path.join(task_save_folder, f'target_classifier_{fold_count}.pt')))
