@@ -13,7 +13,7 @@ import fine_tuning
 
 # add model_train path
 import sys
-sys.path.append('../model_train')
+sys.path.append('./model_train')
 
 import train_ae
 import train_ae_mmd
@@ -123,7 +123,7 @@ def main(args, update_params_dict):
     # Fine-tuning dataset
     labeled_dataloader_generator = data.get_finetune_dataloader_generator(
             gex_features_df = gex_features_df,
-            all_ccle_gex = all_ccle_gex,
+            # all_ccle_gex = all_ccle_gex,
             seed=2020,
             batch_size=training_params['labeled']['batch_size'],
             dataset = args.CCL_dataset, #finetune_dataset
@@ -261,7 +261,7 @@ if __name__ == '__main__':
     gex_features_df = pd.read_csv(f'../data/pretrain_data/{args.pretrain_dataset}_pretrain_dataset.csv',index_col=0)
     CCL_tumor_type = 'all_CCL'
 
-    print(f'Pretrain dataset: Patient({args.pretrain_dataset} {args.pretrain_num}) CCL({args.CCL_type} {CCL_tumor_type}). Select_gene_method: {args.select_gene_method}')
+    print(f'Pretrain dataset: Patient({args.pretrain_dataset} {args.pretrain_num}) CCL( {CCL_tumor_type}). Select_gene_method: {args.select_gene_method}')
     print(f'Zero-shot dataset: {tumor_type}({args.zero_shot_num})')
     print(f'CCL_dataset: {args.CCL_dataset}  Select_drug_method: {args.select_drug_method}')
     print(f'Store_dir: {args.store_dir} ')

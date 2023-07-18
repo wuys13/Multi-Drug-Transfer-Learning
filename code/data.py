@@ -101,7 +101,7 @@ def get_unlabeled_dataloaders(gex_features_df, seed, batch_size, ccle_only=False
 
 
 
-def get_finetune_dataloader_generator(gex_features_df,all_ccle_gex,ccl_match,label_type, sample_size,dataset = 'gdsc1_raw', seed = 2020 , batch_size = 64, ccle_measurement='AUC',                                  
+def get_finetune_dataloader_generator(gex_features_df,label_type, sample_size = 0.006,dataset = 'gdsc1_raw', seed = 2020 , batch_size = 64, ccle_measurement='AUC',                                  
                                      n_splits=5,q=2,
                                      tumor_type = "TCGA",
                                      select_drug_method = True):
@@ -120,8 +120,6 @@ def get_finetune_dataloader_generator(gex_features_df,all_ccle_gex,ccl_match,lab
                                                                     tumor_type = tumor_type)
 
     ccle_labeled_dataloader_generator = get_ccl_labeled_dataloader_generator(gex_features_df=gex_features_df,
-                                                                               all_ccle_gex= all_ccle_gex,
-                                                                               ccl_match = ccl_match,
                                                                                tumor_type = tumor_type,
                                                                               seed=seed,
                                                                               sample_size = sample_size,
@@ -135,7 +133,7 @@ def get_finetune_dataloader_generator(gex_features_df,all_ccle_gex,ccl_match,lab
     for train_labeled_ccle_dataloader, test_labeled_ccle_dataloader in ccle_labeled_dataloader_generator:
         yield train_labeled_ccle_dataloader, test_labeled_ccle_dataloader, test_labeled_dataloaders
 
-def get_ccl_labeled_dataloader_generator(gex_features_df, all_ccle_gex,tumor_type,cid_list,select_drug_method,sample_size,dataset = 'gdsc_raw', batch_size = 64, seed=2020, 
+def get_ccl_labeled_dataloader_generator(gex_features_df,tumor_type,cid_list,select_drug_method,sample_size,dataset = 'gdsc_raw', batch_size = 64, seed=2020, 
                                           measurement='AUC', n_splits=5,q=2):
     # measurement = 'Z_score'       'AUC'      'IC50'
     # dataset = 'gdsc1_raw'   'gdsc1_rebalance.csv'
@@ -188,7 +186,7 @@ def get_ccl_labeled_dataloader_generator(gex_features_df, all_ccle_gex,tumor_typ
     ccle_labeled_feature_df.dropna(inplace=True)
     ccle_labeled_feature_df = ccle_labeled_feature_df.merge(ccl_gex_df,left_index=True,right_index=True)
 
-    drug_emb = pd.read_csv("../data/supple_info/drug_embedding/CCL_dataset/drug_embedding_for_cell_line.csv",index_col=0)
+    drug_emb = pd.read_csv("../data/supple_info/drug_embedding/drug_embedding_for_cell_line.csv",index_col=0)
     ccle_labeled_feature_df =  ccle_labeled_feature_df.merge(drug_emb,left_on="Drug_smile",right_on="Drug_smile") #gex,label(1),drug(300)
     del ccle_labeled_feature_df['Drug_smile'] 
     ccle_labeled_feature_df.dropna(inplace=True)

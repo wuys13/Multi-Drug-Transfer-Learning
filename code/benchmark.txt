@@ -1,0 +1,5 @@
+nohup: ignoring input
+Process < 25, finished last task!
+mkdir: cannot create directory ‘../results/benchmark’: File exists
+mkdir: cannot create directory ‘../records/benchmark_ADP_overlap’: File exists
+All-data pre-training (ADP) model runing!

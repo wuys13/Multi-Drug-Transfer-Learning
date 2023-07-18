@@ -1,4 +1,7 @@
-from evaluation_utils import evaluate_target_classification_epoch,model_save_check, predict_target_classification,predict_pdr_score
+import sys
+sys.path.append('./model_train')
+
+from evaluation_utils import evaluate_target_classification_epoch,model_save_check,predict_pdr_score
 from collections import defaultdict
 from itertools import chain
 from mlp import MLP
@@ -142,10 +145,6 @@ def fine_tune_encoder_drug(encoder, train_dataloader, val_dataloader, fold_count
     target_classifier.load_state_dict(
         torch.load(os.path.join(task_save_folder, f'target_classifier_{fold_count}.pt')))
 
-    prediction_df = None
-    if test_df is not None:
-        prediction_df = predict_target_classification(classifier=target_classifier, test_df=test_df,
-                                                      device=kwargs['device'])
 
     return target_classifier, (target_classification_train_history, target_classification_eval_train_history,
                                target_classification_eval_val_history, target_classification_eval_test_history)#, prediction_df

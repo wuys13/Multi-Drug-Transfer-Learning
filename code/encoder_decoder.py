@@ -1,16 +1,17 @@
-from types_ import *
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from molecules import Molecules
-from neural_fingerprint import NeuralFingerprint
+# from molecules import Molecules
+# from neural_fingerprint import NeuralFingerprint
 
+from typing import TypeVar
+Tensor = TypeVar('torch.tensor')
 
 
 class EncoderDecoder(nn.Module):
 
     def __init__(self, encoder, decoder, normalize_flag=False):
-        super(EncoderDecoder_1, self).__init__()
+        super(EncoderDecoder, self).__init__()
         self.encoder = encoder
         self.decoder = decoder
         self.normalize_flag = normalize_flag

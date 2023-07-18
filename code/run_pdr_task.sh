@@ -6,9 +6,10 @@ function next_task(){
     method_num=$1
     # echo $method_num
     store_dir="pdr_task" 
+    mkdir ../results/${store_dir}
     
     aim=${store_dir}
-    mkdir ../record/${aim}
+    mkdir ../records/${aim}
     gpu_num=5
     for i in {2..20};
     do 
@@ -27,7 +28,7 @@ function next_task(){
             --select_drug_method $select_drug_method \
             --method_num ${method_num} \
             --store_dir $store_dir \
-            1> ../record/${aim}/${method_num}_${i}.txt 2>&1 &
+            1> ../records/${aim}/${method_num}_${i}.txt 2>&1 &
     done
 }
 

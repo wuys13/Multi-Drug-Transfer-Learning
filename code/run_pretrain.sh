@@ -10,9 +10,9 @@ function next_task(){
 
     # For All-data pre-training (ADP) model
     aim=${store_dir}_ADP_${select_drug_method}
-    mkdir ../record/${aim}
-    gpu_param=3 #can be set depending on the number of GPUs, here we use 4 GPUs = 12 / 3
-    for i in {0..13}; 
+    mkdir ../records/${aim}
+    gpu_param=13 #can be set depending on the number of GPUs, here we use 4 GPUs = 12 / gpu_param
+    for i in {1..13}; 
     do 
         a=`expr $i - 1`
         b=`expr $a / ${gpu_param}`
@@ -22,16 +22,18 @@ function next_task(){
             --select_drug_method $select_drug_method \
             --method_num ${method_num} \
             --store_dir $store_dir \
-            1> ../record/${aim}/${method_num}_${i}.txt 2>&1 & 
+            1> ../records/${aim}/${method_num}_${i}.txt 2>&1 & 
     done
 
-    # sleep 5m
+    echo "All-data pre-training (ADP) model runing!"
+    sleep 15m
+    echo "Start to run Test-pairwise pre-training (TPP) model!"
     
     # For Test-pairwise pre-training (TPP) model
     aim=${store_dir}_TPP_${select_drug_method}
     mkdir ../record/${aim}
-    gpu_param=3 #can be set depending on the number of GPUs, here we use 4 GPUs = 12 / 3
-    for i in {0..13}; 
+    gpu_param=13 #can be set depending on the number of GPUs, here we use 4 GPUs = 12 / gpu_param
+    for i in {1..13}; 
     do 
         a=`expr $i - 1`
         b=`expr $a / ${gpu_param}`
@@ -41,7 +43,7 @@ function next_task(){
             --select_drug_method $select_drug_method \
             --method_num ${method_num} \
             --store_dir $store_dir \
-            1> ../record/${aim}/${method_num}_${i}.txt 2>&1 &
+            1> ../records/${aim}/${method_num}_${i}.txt 2>&1 &
     done
 
 }
@@ -53,8 +55,8 @@ do
         process=$(ps -ef | grep P_MDL | grep -v "grep" | awk "{print $2}" | wc -l)
         current_time=$(date  "+%Y%m%d-%H%M%S")
         #nvidia-smi
-        if [ $process -lt 36 ]; then
-            echo "Process < 37, finished last task!"
+        if [ $process -lt 25 ]; then
+            echo "Process < 25, finished last task!"
             next_task $method ;
             echo "Processing next task: $method   ${current_time}";
             break;

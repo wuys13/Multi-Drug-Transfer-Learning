@@ -8,7 +8,6 @@ from ae import AE
 from mlp import MLP
 from encoder_decoder import EncoderDecoder
 
-#这个是adv而非adnn，见96行：loss = s_loss_dict['loss'] + t_loss_dict['loss'] - alpha * adv_loss
 def ae_train_step(ae, s_batch, t_batch, device, optimizer, history, scheduler=None):
     ae.zero_grad()
     ae.train()

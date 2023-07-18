@@ -1,0 +1,8 @@
+nohup: ignoring input
+Processed over last task
+mkdir: cannot create directory ‘../record/pdr_task’: No such file or directory
+run_pdr_task.sh: line 24: ../record/pdr_task/7_2.txt: No such file or directory
+run_pdr_task.sh: line 24: ../record/pdr_task/7_3.txt: No such file or directory
+run_pdr_task.sh: line 24: ../record/pdr_task/7_4.txt: No such file or directory
+Can choose to wait for 5 min ~~~
+run_pdr_task.sh: line 24: ../record/pdr_task/7_5.txt: No such file or directory
