@@ -242,7 +242,7 @@ if __name__ == '__main__':
         # print(f'Tumor type:  Select zero_shot_num: {Num}. Zero-shot dataset: {args.tumor_type}')
     if args.method_num : 
         args.method = [
-                       'ae','dsn', 
+                       'no','ae','dsn', 
                        'ae_mmd','dsrn_mmd','dsn_mmd',
                        'ae_adv','dsrn_adv','dsn_adv'][args.method_num]
     

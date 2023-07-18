@@ -31,7 +31,7 @@ function next_task(){
     
     # For Test-pairwise pre-training (TPP) model
     aim=${store_dir}_TPP_${select_drug_method}
-    mkdir ../record/${aim}
+    mkdir ../records/${aim}
     gpu_param=13 #can be set depending on the number of GPUs, here we use 4 GPUs = 12 / gpu_param
     for i in {1..13}; 
     do 
@@ -48,7 +48,7 @@ function next_task(){
 
 }
 
-for method in {0..7}; 
+for method in {8..1}; 
 do
     while true
     do
@@ -57,8 +57,8 @@ do
         #nvidia-smi
         if [ $process -lt 25 ]; then
             echo "Process < 25, finished last task!"
-            next_task $method ;
             echo "Processing next task: $method   ${current_time}";
+            next_task $method ;
             break;
         else
             echo "Running task num: ${process}      ${current_time}";
