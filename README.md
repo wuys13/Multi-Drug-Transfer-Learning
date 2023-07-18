@@ -54,6 +54,13 @@ P-MDL model zoo includes eight models employing different transfer learning meth
 
 <!-- ![P-MDL model zoo architecture](./png/3_P-DML_model_zoo.png) -->
 
+### Model evaluation
+One of the P-MDL models (DSN-adv) outperforms all of the P-SDL and C-MDL models across all tumor types.
+<p align="center">
+    <img src="./png/4_P-MDL_performance.png" alt="P-MDL performance in 13 tumor types" >
+</p>
+
+
 ### Patient Drug Response (PDR) prediction for PDD
 To further validate the P-MDL models and demonstrate their potential in PDD applications, the test-pairwise pre-trained DSN-adv model was used to screen 233 small molecules for patients of 13 tumor types.
 Take tumor type COAD as an example, most drugs were inefficient, but a few drugs showed potential efficacy for over half of COAD patients.
@@ -108,6 +115,7 @@ less benchmark.txt
 
 The ``benchmark.txt`` will look like the following:
 ```bash
+Processing next task: 8   20230718-043332
 All-data pre-training (ADP) model runing!
 Start to run Test-pairwise pre-training (TPP) model!
 ...
@@ -115,23 +123,25 @@ Start to run Test-pairwise pre-training (TPP) model!
 
 The bash file [run_pretrain.sh](./code/run_pretrain.sh) will run the script [P_MDL.py](./code/P_MDL.py) in a proper params setting. You can also find model Log output in ``records/`` folder and model evaluation results in ``results/`` folder.
 
-
-<!-- Run:
-
-```bash
-cd ../open_biomed
-bash scripts/dti/train_baseline_regression.sh
-```
-
-The results will look like the following (running takes around 40 minutes on an NVIDIA A100 GPU):
-
-```bash
-INFO - __main__ - MSE: 0.2198, Pearson: 0.8529, Spearman: 0.7031, CI: 0.8927, r_m^2: 0.6928
-``` -->
-
 ### Step 3: Interfence the PDR scores for PDD application
 
-For PDD application, we need to predict the efficacy of all drugs to every patients. So here we set the params ``--select_drug_method all`` to recover the model which can be used for all-drug response prediction. For convenience, you can run the bash file [run_pretrain_for_pdr.sh](./code/run_pretrain_for_pdr.sh) by ```nohup bash run_pretrain_for_pdr.sh 1>pdr_pretrain.txt 2>&1 &```.
+Run:
+
+```bash
+cd code
+nohup bash run_pretrain_for_pdr.sh 1>pdr_pretrain.txt 2>&1 &
+less pdr_pretrain.txt
+```
+
+The ``pdr_pretrain.txt`` will look like the following:
+```bash
+Processing next task: 8   20230718-043332
+All-data pre-training (ADP) model runing!
+Start to run Test-pairwise pre-training (TPP) model!
+...
+```
+
+For PDD application, we need to predict the efficacy of all drugs to every patients. So here we set the params ``--select_drug_method all`` in the bash file [run_pretrain_for_pdr.sh](./code/run_pretrain_for_pdr.sh) to recover the model which can be used for all-drug response prediction.
 
 Then you can run the bash file [run_pdr_task.sh](./code/run_pdr_task.sh) by ```nohup bash run_pdr_task.sh 1>pdr_task.txt 2>&1 &```, which will call the script [PDR_task.py](./code/PDR_task.py) to predict the efficacy of all drugs to every patients.
 
