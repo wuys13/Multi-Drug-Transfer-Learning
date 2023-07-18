@@ -63,8 +63,6 @@ def main(args, update_params_dict):
     elif args.method == 'dsn_adv':
         train_fn = train_dsn_adv.train_dsn_adv
 
-    elif args.method == 'dsrn':
-        train_fn = train_dsrn.train_dsrn
     elif args.method == 'dsrn_mmd':
         train_fn = train_dsrn_mmd.train_dsrn_mmd
     elif args.method == 'dsrn_adv':
@@ -142,9 +140,9 @@ def main(args, update_params_dict):
             ft_encoder = deepcopy(encoder)
             print(' ')
             print('Fold count = {}'.format(fold_count))
-            if args.select_drug_method == "overlap" : # only one pretraining model save for benchmark
+            if args.select_drug_method == "overlap" : # only one fine-tuned model save for benchmark
                 save_folder = method_save_folder
-            elif args.select_drug_method == "all" :  # all pretraining model save for pdr
+            elif args.select_drug_method == "all" :  # all fine-tuned model save for pdr
                 save_folder = training_params['model_save_folder']
             target_classifier, ft_historys = fine_tuning.fine_tune_encoder_drug( 
                 encoder=ft_encoder,

@@ -112,7 +112,7 @@ def get_finetune_dataloader_generator(gex_features_df,all_ccle_gex,ccl_match,lab
     """
     RDLogger.DisableLog('rdApp.*')
 
-    #index是TCGA_id，smiles(0列),gex,label(-1列)
+    # TCGA_id(index)，smiles(column 0),gex,label(column -1)
     test_labeled_dataloaders,cid_list = get_tcga_ZS_dataloaders(gex_features_df=gex_features_df, 
                                                                     label_type = label_type,
                                                                     batch_size=batch_size,
@@ -160,7 +160,7 @@ def get_ccl_labeled_dataloader_generator(gex_features_df, all_ccle_gex,tumor_typ
             target_df['Drug_name'].unique() , target_df['Drug_name'].nunique()
         ))
     elif select_drug_method == "random":
-        target_df = sensitivity_df.sample(n = round(sample_size*sensitivity_df.shape[0])) #抽取 %1 的样本
+        target_df = sensitivity_df.sample(n = round(sample_size*sensitivity_df.shape[0])) # sample some data randomly
     print(' ')
     
     print("Select {0} dataset {1} / {2}".format(dataset, 
@@ -245,20 +245,6 @@ def get_ccl_labeled_dataloader_generator(gex_features_df, all_ccle_gex,tumor_typ
         yield train_labeled_ccle_dataloader, test_labeled_ccle_dataloader
 
 
-# Generating Zero-shot dataset for specific tumor type
-def get_all_tcga_ZS_dataloaders(all_patient_gex, batch_size,Tumor_type_list, label_type = "PFS",q=2):
-    patient_sample_info = pd.read_csv("../data/preprocessed_dat/xena_sample_info.csv", index_col=0) 
-   
-    for TT in Tumor_type_list:
-        print(f'Generating Zero-shot dataset: {TT}')
-        patient_samples = all_patient_gex.index.intersection(patient_sample_info.loc[patient_sample_info.tumor_type == TT].index)
-        gex_features_df = all_patient_gex.loc[patient_samples]
-        # print(gex_features_df)
-        TT_ZS_dataloaders,_ = get_tcga_ZS_dataloaders(gex_features_df, 
-                                                    batch_size, label_type = label_type,q=q,tumor_type = TT)
-        yield TT_ZS_dataloaders, TT
-
-
 def get_tcga_ZS_dataloaders(gex_features_df, batch_size, label_type = "PFS",q=2,tumor_type = "TCGA"):
     '''
     gex_features_df: pd.DataFrame, index: patient_id, columns: gene_id
@@ -334,7 +320,20 @@ def get_tcga_ZS_dataloaders(gex_features_df, batch_size, label_type = "PFS",q=2,
     return labeled_tcga_dataloader,cid_list
 
 
-###
+# Generating Zero-shot dataset for specific tumor type
+def get_all_tcga_ZS_dataloaders(all_patient_gex, batch_size,Tumor_type_list, label_type = "PFS",q=2):
+    patient_sample_info = pd.read_csv("../data/preprocessed_dat/xena_sample_info.csv", index_col=0) 
+   
+    for TT in Tumor_type_list:
+        print(f'Generating Zero-shot dataset: {TT}')
+        patient_samples = all_patient_gex.index.intersection(patient_sample_info.loc[patient_sample_info.tumor_type == TT].index)
+        gex_features_df = all_patient_gex.loc[patient_samples]
+        # print(gex_features_df)
+        TT_ZS_dataloaders,_ = get_tcga_ZS_dataloaders(gex_features_df, 
+                                                    batch_size, label_type = label_type,q=q,tumor_type = TT)
+        yield TT_ZS_dataloaders, TT
+
+# Generating PDR dataset for specific tumor type
 def get_pdr_data_dataloaders(gex_features_df, batch_size, tumor_type = "TCGA"):
     # Return: Dataloader: TCGA_id，smiles,gex,label
     tcga_gex_feature_df = gex_features_df.loc[gex_features_df.index.str.startswith('TCGA')]
