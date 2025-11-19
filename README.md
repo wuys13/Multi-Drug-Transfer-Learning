@@ -149,7 +149,7 @@ Then you can run the bash file [run_pdr_task.sh](./code/run_pdr_task.sh) by ```n
 
 ## Contact Us
 
-As a pre-alpha version release, we are looking forward to user feedback to help us improve our framework. If you have any questions or suggestions, please open an issue or contact [wuyushuai@mail.tsinghua.edu.cn](wuyushuai@mail.tsinghua.edu.cn).
+As a pre-alpha version release, we are looking forward to user feedback to help us improve our framework. If you have any questions or suggestions, please open an issue or contact [wuyushuai@mail.tsinghua.edu.cn].
 
 
 ## Cite Us
@@ -159,7 +159,7 @@ If you find our open-sourced code & models helpful to your research, please cons
 @misc{P_MDL_code,
   author={Yushuai Wu},
   title={Code of Multi-Drug-Transfer-Learning},
-  year={2023},
+  year={2025},
   howpublished={\url{https://github.com/wuys13/Multi-Drug-Transfer-Learning.git}}
 }
 ```
