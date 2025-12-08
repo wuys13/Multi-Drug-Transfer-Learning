@@ -1,12 +1,7 @@
 # Multi-Drug-Transfer-Learning
 Pre-clinical drug discovery (PDD) faces the low efficiency dilemma. One of the reasons is the lack of cross-drug efficacy evaluation infrastructure at the patient level. Here we propose Patient Multi-Drug Learning(P-MDL) task, and construct the P-MDL dataset and model zoo. The best P-MDL model DSN-adv achieve the SOTA performance in all of the 13 tumor types compared with previous SOTA models. 
 
-
-## News!
-
-- [07/12] 🔥The code has been updated in Github!
-
-
+You can also check out our [podcast](https://www.ximalaya.com/sound/938380402) and watch our intro videos (in both [Chinese](https://www.bilibili.com/video/BV1ta2LBzEJd/?spm_id_from=333.1387.homepage.video_card.click&vd_source=3d478d07006b6eaf39bdb03ccbf5ec3a) and [English](https://youtu.be/G3_kJq5isG8)) for a quick overview.
 
 ## Features
 
@@ -149,7 +144,7 @@ Then you can run the bash file [run_pdr_task.sh](./code/run_pdr_task.sh) by ```n
 
 ## Contact Us
 
-As a pre-alpha version release, we are looking forward to user feedback to help us improve our framework. If you have any questions or suggestions, please open an issue or contact [wuyushuai@mail.tsinghua.edu.cn].
+As a pre-alpha version release, we are looking forward to user feedback to help us improve our framework. If you have any questions or suggestions, please open an issue or contact [wuyushuai0727@gmail.com].
 
 
 ## Cite Us
